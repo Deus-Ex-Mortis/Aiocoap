@@ -34,38 +34,69 @@ from aiocoap import *
 
 async def main():
 
-    print("Richiesta Input-Output Per Autenticazione...\n")
-    url = "http://127.0.0.1:8081"
-    x = requests.get(url)
-    inputs = []
-    outputs = []
-    counter = 0
-    for j in range(0,100):
-        inputs.append(str(x.json()).split(',')[j].split("'")[1])
-        outputs.append(str(x.json()).split(',')[j].split("'")[3])
-        #print(inputs[j] + ":" + outputs[j])
+    with open('seq.txt', 'r') as f:
+        lines = f.read().splitlines()
+        last_line = lines[-1]
+        f.close()
+    seq_vecchia = int(last_line)
+    seq_nuova = seq_vecchia+1
+
+    if seq_vecchia == 0 or seq_vecchia % 100 == 0:
+        print("Richiesta Input-Output Per Autenticazione...\n")
+        url = "http://127.0.0.1:8081"
+        data = str(seq_vecchia)
+        x = requests.post(url, data)
+        inputs = []
+        output_xres = []
+        output_autn = []
+        f = open('gateway.txt', 'w')
+        f.write("")
+        f.close()
+        f = open('gateway.txt', 'a')
+        for j in range(0, 100):
+            inputs.append(str(x.json()).split(',')[j].split("'")[1])
+            output_xres.append(str(x.json()).split(',')[j].split("'")[3].split('#')[0])
+            output_autn.append(str(x.json()).split(',')[j].split("'")[3].split('#')[1])
+            # print(inputs[0] + ":" + output_xres[0] + ":" + output_autn[0])
+            f.write(inputs[j] + ":" + output_xres[j] + ":" + output_autn[j] + "\n")
+        f.close()
+
+    f = open('gateway.txt', 'r')
+    lista = []
+    for x in f:
+        lista.append(x)
+
+    rand = lista[seq_vecchia % 100].split(':')[0]
+    xres = lista[seq_vecchia % 100].split(':')[1]
+    autn = lista[seq_vecchia % 100].split(':')[2]
+    f.close()
+
+    f = open('seq.txt', 'a')
+    f.write('\n' + str(seq_nuova))
+    f.close()
+
     riscontro = []
-    number_list = random.sample(range(0,100), 10)
     print("Invio Input...\n")
     print("Ricezione hmac...\n")
 
     protocol = await Context.create_client_context()
-    for k in range(0, 10):
-        url = "coap://[fe80::fcb7:95ff:fe21:a414%riot0]/auth"
-        payload = str(inputs[number_list[k]])
-        #print(payload)
-        responses = [
-            protocol.request(Message(code=GET, uri=url, payload=bytes(payload, encoding='utf-8'))).response
-        ]
-        for f in asyncio.as_completed(responses):
-            response = await f
-            riscontro.append(response.payload.decode())
-    for g in range(0,10):
-        if outputs[number_list[g]].upper() == str(riscontro[g]):
-            print("confronto numero " + str(g+1) + ": ... OK")
-            counter +=1
-            if counter == 10:
-                print("\nDispositivo Autenticato")
+
+    url = "coap://[fe80::fcb7:95ff:fe21:a414%riot0]/auth"
+    payload = str(rand) + "#" + str(seq_vecchia) + "#" + str(autn)
+    # print(payload)
+    responses = [
+        protocol.request(Message(code=GET, uri=url, payload=bytes(payload, encoding='utf-8'))).response
+    ]
+    for f in asyncio.as_completed(responses):
+        response = await f
+        riscontro.append(response.payload.decode())
+    print(riscontro[0].lower())
+    print(xres)
+    if riscontro[0].lower() == str(xres):
+        print("\nDispositivo Autenticato")
+
+    else:
+        print("\nAutenticazione Fallita")
 
 
 if __name__ == "__main__":
