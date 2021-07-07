@@ -38,7 +38,6 @@ async def main():
         response = await f
         key = response.payload
 
-
     class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         def do_POST(self):
             self.send_response(200)
@@ -64,12 +63,12 @@ async def main():
                 print("Generazione Input Casuali...\n")
                 print("Generazione hmac...\n")
                 for i in range(0, 100):
-                    number = str(number_list[i]) + post_data + "XRES"
+                    number = str(number_list[i]) + str(i) + "XRES"
                     h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
                     output.append(h.hexdigest())
 
                 for i in range(0, 100):
-                    number = post_data + str(number_list[i]) + "AUTN"
+                    number = str(number_list[i]) + str(i) + "AUTN"
                     h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
                     output[i] = output[i] + "#" + h.hexdigest()
 
