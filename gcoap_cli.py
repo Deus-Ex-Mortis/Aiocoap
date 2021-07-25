@@ -92,7 +92,21 @@ async def main():
         riscontro.append(response.payload.decode())
     print(riscontro[0].lower())
     print(xres)
-    if riscontro[0].lower() == str(xres):
+
+    corta = riscontro[0].lower()
+    lunga = str(xres)
+    j = 0
+    counter = 0
+
+    for k in range(0,64):
+        if corta[j] == lunga[k]:
+            counter += 1
+        else:
+            j -= 1
+        j += 1
+    print(counter)
+
+    if counter >= 60:
         print("\nDispositivo Autenticato")
 
     else:

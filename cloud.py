@@ -63,12 +63,14 @@ async def main():
                 print("Generazione Input Casuali...\n")
                 print("Generazione hmac...\n")
                 for i in range(0, 100):
-                    number = str(number_list[i]) + str(i) + "XRES"
+                    mid = post_data_int + i
+                    number = str(number_list[i]) + str(mid) + "XRES"
                     h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
                     output.append(h.hexdigest())
 
                 for i in range(0, 100):
-                    number = str(number_list[i]) + str(i) + "AUTN"
+                    mid = post_data_int + i
+                    number = str(number_list[i]) + str(mid) + "AUTN"
                     h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
                     output[i] = output[i] + "#" + h.hexdigest()
 
