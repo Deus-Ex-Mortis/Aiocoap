@@ -7,4 +7,4 @@ in un terminale far partire il server cloud.py con il seguente comando:
 
 Successivamente, in un altro terminale, digitare il seguente comando per avviare il test:
 
-`python3 gcoap.py`
+`python3 gcoap_cli.py`
