@@ -1,10 +1,8 @@
-#Aiocoap per modello RIOT-AKA
-Questi due programmi servono per testare il funzionamento del modello [RIOT-AKA](https://github.com/Deus-Ex-Mortis/RIOT-security/tree/security/examples/gcoap_server).
-##Avvio del test
-in un terminale far partire il server cloud.py con il seguente comando:
-
+# Aiocoap for RIOT-AKA model
+These two programs are used to test the functioning of the model [RIOT-AKA](https://github.com/Deus-Ex-Mortis/RIOT-security/tree/security/examples/gcoap_server).
+## Starting the test
+in a terminal start the cloud.py server with the following command:
 `python3 cloud.py`
 
-Successivamente, in un altro terminale, digitare il seguente comando per avviare il test:
-
+Next, in another terminal, type the following command to start the test:
 `python3 gcoap_cli.py`
