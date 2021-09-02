@@ -26,11 +26,13 @@ except ImportError:
 
 from aiocoap import *
 
+# fe80::fcb7:95ff:fe21:a414
+ip_coap = input('Insert COAP server ip: ')
 
 async def main():
     print("Richiesta Chiave...\n")
     protocol = await Context.create_client_context()
-    url = "coap://[fe80::fcb7:95ff:fe21:a414%riot0]/key"
+    url = "coap://[" + ip_coap + "%riot0]/key"
     responses = [
         protocol.request(Message(code=GET, uri=url)).response
     ]

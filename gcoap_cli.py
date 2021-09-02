@@ -30,7 +30,7 @@ from aiocoap import *
 #    print(response.payload)
 #run(main())
 
-
+ip_coap = input('Insert COAP server ip: ')
 
 async def main():
 
@@ -76,12 +76,12 @@ async def main():
     f.close()
 
     riscontro = []
-    print("Invio Input...\n")
+    print("\nInvio Input...\n")
     print("Ricezione hmac...\n")
 
     protocol = await Context.create_client_context()
 
-    url = "coap://[fe80::fcb7:95ff:fe21:a414%riot0]/auth"
+    url = "coap://[" + ip_coap + "%riot0]/auth"
     payload = str(rand) + "#" + str(seq_vecchia) + "#" + str(autn)
     # print(payload)
     responses = [
@@ -92,6 +92,7 @@ async def main():
         riscontro.append(response.payload.decode())
     print(riscontro[0].lower())
     print(xres)
+    print("Confronto HMAC...")
 
     corta = riscontro[0].lower()
     lunga = str(xres)
