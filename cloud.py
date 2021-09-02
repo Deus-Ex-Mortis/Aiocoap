@@ -26,13 +26,16 @@ except ImportError:
 
 from aiocoap import *
 
-# fe80::fcb7:95ff:fe21:a414
-ip_coap = input('Insert COAP server ip: ')
+if len(sys.argv) < 3:
+    print("Please provide the IP address and the tap interface which you want to connect to.")
+    sys.exit(0)
+
+ip_coap = sys.argv[1]+"%"+sys.argv[2]
 
 async def main():
     print("Richiesta Chiave...\n")
     protocol = await Context.create_client_context()
-    url = "coap://[" + ip_coap + "%riot0]/key"
+    url = "coap://[" + ip_coap + "]/key"
     responses = [
         protocol.request(Message(code=GET, uri=url)).response
     ]

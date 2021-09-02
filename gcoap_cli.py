@@ -30,7 +30,11 @@ from aiocoap import *
 #    print(response.payload)
 #run(main())
 
-ip_coap = input('Insert COAP server ip: ')
+if len(sys.argv) < 3:
+    print("Please provide the IP address and the tap interface which you want to connect to.")
+    sys.exit(0)
+
+ip_coap = sys.argv[1]+"%"+sys.argv[2]
 
 async def main():
 
@@ -81,7 +85,7 @@ async def main():
 
     protocol = await Context.create_client_context()
 
-    url = "coap://[" + ip_coap + "%riot0]/auth"
+    url = "coap://[" + ip_coap + "]/auth"
     payload = str(rand) + "#" + str(seq_vecchia) + "#" + str(autn)
     # print(payload)
     responses = [
