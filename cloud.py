@@ -27,7 +27,7 @@ except ImportError:
 from aiocoap import *
 
 if len(sys.argv) < 3:
-    print("Please provide the IP address and the tap interface which you want to connect to.")
+    print("Please provide the IP address and the tap interface which you want to connect to. (Optional) type also 'puf' to use SRAM-PUF key generation.")
     sys.exit(0)
 
 ip_coap = sys.argv[1]+"%"+sys.argv[2]
@@ -43,7 +43,7 @@ async def main():
     # print(len(sys.argv))
 
     if puf:
-        print("Richiesta Chiave...\n")
+        print("Requesting SRAM-PUF generated key...\n")
         protocol = await Context.create_client_context()
         url = "coap://[" + ip_coap + "]/key"
         responses = [
@@ -52,8 +52,10 @@ async def main():
         for f in asyncio.as_completed(responses):
             response = await f
             key = response.payload
+            print("Key received! Key is: ",key.decode("utf-8"))
     else:
         key = "cfb8cdb1526a8c4f3372501b83dadb27"
+        print("PSK mode. Key is: ",key)
 
     class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         def do_POST(self):
@@ -77,8 +79,8 @@ async def main():
 
                 number_list = random.sample(range(0, 100000), 100)
                 output = []
-                print("Generazione Input Casuali...\n")
-                print("Generazione hmac...\n")
+                print("Random Input generation...\n")
+                print("Hmac generation...\n")
                 for i in range(0, 100):
                     mid = post_data_int + i
                     number = str(number_list[i]) + str(mid) + "XRES"
@@ -115,8 +117,8 @@ async def main():
 
                 number_list = random.sample(range(0, 100000), 100)
                 output = []
-                print("Generazione Input Casuali...\n")
-                print("Generazione hmac...\n")
+                print("Random Input generation...\n")
+                print("Hmac generation...\n")
                 for i in range(0, 100):
                     number = str(number_list[i]) + post_data + "XRES"
                     if puf:
@@ -143,16 +145,16 @@ async def main():
                     self.wfile.write(bytes(message, "utf8"))
 
             else:
-                print("Numero sequenza anomalo, token ancora disponibili")
+                print("Bad sequence number, token are still available!")
 
             return
 
     def run():
-        print('\nAvvio del server...\n')
+        print('\nStarting server...\n')
         server_address = ('127.0.0.1', 8081)
         httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
-        print('Server in esecuzione...\n')
-        print("Attesa...\n")
+        print('Server is running!\n')
+        print("Waiting...\n")
         httpd.serve_forever()
 
     run()

@@ -46,7 +46,7 @@ async def main():
     seq_nuova = seq_vecchia+1
 
     if seq_vecchia == 0 or seq_vecchia % 100 == 0:
-        print("Richiesta Input-Output Per Autenticazione...\n")
+        print("Requesting input-output for authentication...\n")
         url = "http://127.0.0.1:8081"
         data = str(seq_vecchia)
         x = requests.post(url, data)
@@ -80,8 +80,8 @@ async def main():
     f.close()
 
     riscontro = []
-    print("\nInvio Input...\n")
-    print("Ricezione hmac...\n")
+    print("\nSending Input...\n")
+    print("Receiving hmac...\n")
 
     protocol = await Context.create_client_context()
 
@@ -96,7 +96,7 @@ async def main():
         riscontro.append(response.payload.decode())
     print(riscontro[0].lower())
     print(xres)
-    print("Confronto HMAC...")
+    print("Comparing HMAC...")
 
     corta = riscontro[0].lower()
     lunga = str(xres)
@@ -112,10 +112,10 @@ async def main():
     print(counter)
 
     if counter >= 60:
-        print("\nDispositivo Autenticato")
+        print("\nAuthentication Successful!")
 
     else:
-        print("\nAutenticazione Fallita")
+        print("\nAuthentication Failed. Please try again or check errors...")
 
 
 if __name__ == "__main__":
