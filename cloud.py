@@ -32,16 +32,27 @@ if len(sys.argv) < 3:
 
 ip_coap = sys.argv[1]+"%"+sys.argv[2]
 
+if len(sys.argv) > 3 and sys.argv[3] == "puf":
+    puf = True
+else:
+    puf = False
+
 async def main():
-    print("Richiesta Chiave...\n")
-    protocol = await Context.create_client_context()
-    url = "coap://[" + ip_coap + "]/key"
-    responses = [
-        protocol.request(Message(code=GET, uri=url)).response
-    ]
-    for f in asyncio.as_completed(responses):
-        response = await f
-        key = response.payload
+
+    print(len(sys.argv))
+
+    if puf:
+        print("Richiesta Chiave...\n")
+        protocol = await Context.create_client_context()
+        url = "coap://[" + ip_coap + "]/key"
+        responses = [
+            protocol.request(Message(code=GET, uri=url)).response
+        ]
+        for f in asyncio.as_completed(responses):
+            response = await f
+            key = response.payload
+    else:
+        key = "cfb8cdb1526a8c4f3372501b83dadb27"
 
     class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         def do_POST(self):
@@ -70,13 +81,19 @@ async def main():
                 for i in range(0, 100):
                     mid = post_data_int + i
                     number = str(number_list[i]) + str(mid) + "XRES"
-                    h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    if puf:
+                        h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    else:
+                        h = hmac.new(bytes(key,encoding= "utf-8"), number.encode(), hashlib.sha256)
                     output.append(h.hexdigest())
 
                 for i in range(0, 100):
                     mid = post_data_int + i
                     number = str(number_list[i]) + str(mid) + "AUTN"
-                    h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    if puf:
+                        h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    else:
+                        h = hmac.new(bytes(key,encoding= "utf-8"), number.encode(), hashlib.sha256)
                     output[i] = output[i] + "#" + h.hexdigest()
 
                 for j in range(0, 100):
@@ -101,12 +118,18 @@ async def main():
                 print("Generazione hmac...\n")
                 for i in range(0, 100):
                     number = str(number_list[i]) + post_data + "XRES"
-                    h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    if puf:
+                        h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    else:
+                        h = hmac.new(bytes(key,encoding= "utf-8"), number.encode(), hashlib.sha256)
                     output.append(h.hexdigest())
 
                 for i in range(0, 100):
                     number = post_data + str(number_list[i]) + "AUTN"
-                    h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    if puf:
+                        h = hmac.new(bytes(key), number.encode(), hashlib.sha256)
+                    else:
+                        h = hmac.new(bytes(key,encoding= "utf-8"), number.encode(), hashlib.sha256)
                     output[i] = output[i] + "#" + h.hexdigest()
 
                 for j in range(0, 100):
