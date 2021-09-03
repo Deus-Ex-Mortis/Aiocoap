@@ -35,11 +35,12 @@ ip_coap = sys.argv[1]+"%"+sys.argv[2]
 if len(sys.argv) > 3 and sys.argv[3] == "puf":
     puf = True
 else:
+    print("To enable the PUF key mode type puf in the command")
     puf = False
 
 async def main():
 
-    print(len(sys.argv))
+    # print(len(sys.argv))
 
     if puf:
         print("Richiesta Chiave...\n")
@@ -147,7 +148,7 @@ async def main():
             return
 
     def run():
-        print('Avvio del server...\n')
+        print('\nAvvio del server...\n')
         server_address = ('127.0.0.1', 8081)
         httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
         print('Server in esecuzione...\n')
